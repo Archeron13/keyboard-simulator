@@ -15,8 +15,8 @@ with open("test.txt") as f:
     sentence = f.read()
     #char_sentence = list(sentence)
     list_sentences = re.split(r'[ \n]',sentence)
-    char_sentence = sentence.replace("\n"," ")
-    print(char_sentence)
+    char_sentence = re.split(r'[\n]',sentence)
+    print(list_sentences)
 
 
 
@@ -60,24 +60,24 @@ class startGUI:
         self.bgCanvas = background(self.root)
         self.bgCanvas.place(x=0,y=0,relwidth=1,relheight=1)
 
-        self.text_var = list_sentences[:20]
+        self.text_var = list_sentences[:15]
         self.input_var = ""
 
         self.cur_key = ""
 
-       # self.mainTextLabel = ctk.CTkLabel(self.root,text = "Keyboard Simulator",text_font = ("Arial50,20"),fg_color=("white","grey"))
-        # self.mainTextLabel.pack(pady="10",fill="x")
+        self.mainTextLabel = ctk.CTkLabel(self.root,text = "Keyboard Simulator",text_font = ("Arial50,20"),fg_color=("white","grey"))
+        self.mainTextLabel.pack(pady="10",fill="x")
 
-        self.showTextLabel = ctk.CTkLabel(self.root,text =self.text_var,text_font=("Arial50",12))
-        self.showTextLabel.pack(fill="x",anchor="center")
+        self.showTextLabel = ctk.CTkLabel(self.root,text =self.text_var,text_font=("Arial50",12),fg_color=("white","gray"))
+        self.showTextLabel.pack(side="top",fill="x",expand= True)
 
 
-        self.inputTextLabel = ctk.CTkLabel(self.root,text =self.input_var,text_font=("Arial50","12"),text_color="white",fg_color=("black","grey"))
+        self.inputTextLabel = ctk.CTkLabel(self.root,text =self.input_var,text_font=("Arial50","12"),fg_color=("white","blue"))
         self.inputTextLabel.pack(fill="x",expand = True)
 
         self.button = ctk.CTkButton(self.root, text="Press to Start", command=Thread(target=self.start_game).start)
 
-        self.button.pack(padx=20, pady=40)
+        self.button.pack(padx=20, pady=10)
 
         #STatistics for game
         self.wrong_counter = 0
@@ -91,18 +91,13 @@ class startGUI:
         self.cur_key = event.char
         self.cur_state= event.state
         self.cur_keycode = event.keycode
+        print(self.cur_state)
+        print(self.cur_keycode)
         self.key_count += 1
 
     def start_game(self):
         self.root.bind("<KeyPress>",self.key_press)
         for cur_word in char_sentence:
-            if (len(self.input_var) >= 60):
-                for x in range(35,50):
-                    print(x)
-                    if self.input_var[x] == " ":
-                        self.input_var= self.input_var[x:]
-                        self.inputTextLabel.configure(text = self.input_var)
-                        break
             for curChar in cur_word:
                 exit_loop = False
                 if (exit_loop):
@@ -111,8 +106,6 @@ class startGUI:
                 while True:
                     if (curChar == self.cur_key):
                         self.char_count += 1
-                        self.input_var+=(curChar)
-                        self.inputTextLabel.configure(text =self.input_var)
                         break
                     elif (self.cur_state == 17 and self.cur_keycode == 52 ):
                         exit_loop = False

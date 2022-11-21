@@ -5,3 +5,4 @@ Current Development Plan:
 2) Develop a way to input and output the sentences from a file
 3) Add statistical features such as counting number of errors,typing speed etc.
 4) Additional funcitonality to be thought of later
+
