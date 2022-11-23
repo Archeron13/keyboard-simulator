@@ -137,7 +137,6 @@ class StartGUI:
 
     def browse(self):
         """Function for browsing text file to play the game"""
-        print("Here")
         file = tkinter.filedialog.askopenfile(mode='r', filetypes=[('Text Files', '*.txt')])
         if file:
             sentence = file.read()
@@ -199,13 +198,11 @@ class StartGUI:
                 exit_loop = False
                 if exit_loop:
                     break
-                print(self.iterator, "is the iterator ", self.char_sentence[self.iterator])
                 self.cur_word = self.char_sentence[self.iterator]
                 self.last_index_of_list += 1
                 self.word_index += 1
                 if len(self.input_var) >= 60:  # To reset input_text_label if it gets too big
                     for x in range(35, 50):
-                        print(x)
                         if self.input_var[x] == " ":
                             self.input_var = self.input_var[x:]
                             self.input_text_label.configure(text=self.input_var)
@@ -220,7 +217,6 @@ class StartGUI:
                     self.input_label.configure(text=f'{self.cur_word} ')
                 while True:
                     if not self.game_running:
-                        print("Breaking THREAD")
                         break
                     if self.cur_word == self.cur_key:
                         self.correct_count += 1
