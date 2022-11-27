@@ -16,8 +16,6 @@ pip3 install customtkinter
 - Choosing your own file from which the text will be displayed from.
 - Restart button
 
-## Features to be implemented
- - Heatmap
 
 ## Working
 
@@ -25,5 +23,7 @@ The main mechanism of this program,that is detecting keystroke is done by the us
 Tkinter is a bare-bone library and doesn't offer the functionality of dynamically resizing background image, luckily it is very easy to implement and 
 I had problem with how to implement the restarting function since you cannot restart a thread once you stop it. I tried to create a thread manager but I didn't find success so I decided to just change the iterator in the thread's loop to restart the function.
 
-
-
+## Running the simulator
+```bash 
+python main.py
+```
