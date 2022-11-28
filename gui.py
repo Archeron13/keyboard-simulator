@@ -47,6 +47,7 @@ class StartGUI:
         self.not_saved = True
         self.change_save = False
         self.name = None
+        self.exit_loop = False
 
         self.show_text_label = ctk.CTkLabel(self.root, text=self.text_var,
                                             text_font=("Arial50", 15))
@@ -75,6 +76,11 @@ class StartGUI:
                                           command=self.start_game, fg_color='grey',
                                           text_color="black", text_font="Arial50,15")
         self.start_button.pack(side="top", padx=20, pady=20)
+
+        self.stop_button = ctk.CTkButton(self.button_frame,text="Stop",
+                                         command = self.end_game, fg_color="grey",
+                                         text_color="black", text_font ="Arial50,15")
+        self.stop_button.pack(side="top",padx=20,pady=20)
 
         self.browse_button = ctk.CTkButton(self.button_frame, text="Browse",
                                            fg_color="grey", text_color="black",
@@ -111,6 +117,10 @@ class StartGUI:
         else:
             tkinter.messagebox.showerror("Error", "Game is already running!. \
                                             Press the restart button to restart the game")
+
+    def end_game(self):
+        self.exit_loop = True
+
 
     def browse(self):
         """Function for browsing text file to play the game"""
@@ -153,6 +163,7 @@ class StartGUI:
         self.cur_word = self.char_sentence[0]
         self.input_label.configure(text=f'{self.cur_word}')
         self.change_save = True
+        self.exit_loop = False
         return None
 
     def key_press(self, event):
@@ -169,12 +180,9 @@ class StartGUI:
         self.show_text_label.configure(text=self.text_var)
         self.word_index = 0  # Used to see which word to remove that has already been iterated
         while True:
-            while self.iterator < len(self.char_sentence):
+            while self.iterator < len(self.char_sentence) and not self.exit_loop:
                 if self.change_save:
                     self.not_saved = True
-                exit_loop = False
-                if exit_loop:
-                    break
                 self.cur_word = self.char_sentence[self.iterator]
                 self.last_index_of_list += 1
                 self.word_index += 1
@@ -193,7 +201,7 @@ class StartGUI:
                 else:
                     self.input_label.configure(text=f'{self.cur_word} ')
                 while True:
-                    if not self.game_running:
+                    if not self.game_running or self.exit_loop:
                         break
                     if self.cur_word == self.cur_key:
                         self.correct_count += 1
