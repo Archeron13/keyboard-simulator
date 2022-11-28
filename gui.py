@@ -4,6 +4,8 @@ import tkinter.filedialog
 import re
 import os
 import time
+import numpy as np
+from kbhmap import Heatmap
 from threading import Thread
 import customtkinter as ctk
 from PIL import Image, ImageTk
@@ -77,7 +79,7 @@ class StartGUI:
                                           text_color="black", text_font="Arial50,15")
         self.start_button.pack(side="top", padx=20, pady=20)
 
-        self.stop_button = ctk.CTkButton(self.button_frame,text="Stop",
+        self.stop_button = ctk.CTkButton(self.button_frame,text="End Game",
                                          command = self.end_game, fg_color="grey",
                                          text_color="black", text_font ="Arial50,15")
         self.stop_button.pack(side="top",padx=20,pady=20)
@@ -119,7 +121,11 @@ class StartGUI:
                                             Press the restart button to restart the game")
 
     def end_game(self):
-        self.exit_loop = True
+        if self.game_running:
+            self.exit_loop = True
+        else:
+            tkinter.messagebox.showerror("Error", "Game is not running!. \
+                                            Press the start button to start the game")
 
 
     def browse(self):
@@ -171,7 +177,16 @@ class StartGUI:
         self.cur_key = event.char
         self.cur_state = event.state
         self.cur_keycode = event.keycode
+        if (self.cur_word) != self.cur_key:
+            with open("keystroke.txt","a") as file:
+                file.write(self.cur_word)
         self.total_counter += 1
+
+    def heatmap_window(self):
+        heatmap = tkinter.PhotoImage(file = "temp.png")
+        heatmap_label = ctk.CTkLabel(heatmap_window,image = heatmap)
+        heatmap_label.pack()
+        heatmap_window.mainloop()
 
     def start_game_thread(self):
         """Function which will be started as a thread for playing the game"""
@@ -203,14 +218,17 @@ class StartGUI:
                 while True:
                     if not self.game_running or self.exit_loop:
                         break
+
                     if self.cur_word == self.cur_key:
                         self.correct_count += 1
                         self.input_var += self.cur_word
                         self.input_text_label.configure(text=self.input_var)
                         break
+
+
                 self.iterator += 1
                 self.time_taken = time.time() - start_time
-            self.result_label.configure(text=(f'Keystroke: {self.correct_count}\n'
+            self.result_label.configure(text=(f'Keystroke: {self.total_counter}\n'
                                               f'Wrong Keystroke: {self.total_counter - self.correct_count}\n'
                                               f'Character Per Seconds  {self.correct_count / self.time_taken:.2f}\n'
                                               f'Character Per Minute: {self.correct_count / self.time_taken * 60:.2f}\n'
@@ -219,6 +237,8 @@ class StartGUI:
             if self.not_saved:
                 save_score = tkinter.messagebox.askyesno(
                     "Save score", "Would you like to save your score?")
+                show_heatmap = tkinter.messagebox.askyesno(
+                    "Save score", "Would you like to save the heatmap of your the letter you get wrong the most?")
                 self.not_saved = False
             if save_score:
                 save_score = False
@@ -226,10 +246,29 @@ class StartGUI:
                     if os.stat("score.txt").st_size == 0:
                         # If file is empty writing the header
                         file.write("Name,CPM,Accuracy,Score")
-
                     file.write(f'\n{self.name},{self.correct_count / self.time_taken * 60:.2f}')
                     file.write(f',{self.correct_count / self.total_counter * 100:.2f}')
                     score = self.correct_count / self.total_counter * 100 * \
                             (self.correct_count / self.time_taken * 60)
                     file.write(f',{score:.2f}')
+            if show_heatmap:
+                show_heatmap = False
+                HMQ = Heatmap('qwerty')
+                char_dict = []
+                with open("keystroke.txt","r") as chars:
+                    unique,count = np.unique([char for char in chars.read()],return_counts=True)
+                    char_dict = dict(zip(unique,count))
+                HMQ.make_heatmap(char_dict,layout='qwerty',cmap='YlGnBu',sigmas=2)
+                directory = tkinter.filedialog.askdirectory(initialdir="./")
+                print(directory)
+                save_name = self.name + str(time.time())
+                HMQ.save(f'{save_name}.png',directory)
+                tkinter.messagebox.showinfo(title="Heatmap",message = f'Heatmap {save_name} successfully saved in {directory}')
+
+
+            if os.path.exists("keystroke.txt"):
+                os.remove("keystroke.txt")
+            #if os.path.exists("temp.png"):
+             #   os.remove("temp.png")
+
 

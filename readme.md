@@ -1,10 +1,12 @@
 # Keyboard-Simulator
 
 ## Requirements
-The only non-standard python library required is Custom Tkinter. You can install it by 
+The non-standard python libraries required are Custom Tkinter,scipy,kbhmap. You can install them by 
 
 ```bash 
 pip3 install customtkinter
+pip3 install kbhmap
+pip3 install scipy
 ```
 ****
 
@@ -15,6 +17,8 @@ pip3 install customtkinter
 - Saving the abovementioned statistics in a score.txt
 - Choosing your own file from which the text will be displayed from.
 - Restart button
+- End button to get statistic mid-way instead of until the end of text
+- Heatmap: to shows the letter the user gets wrong the most 
 
 
 ## Working
