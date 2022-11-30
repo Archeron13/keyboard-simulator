@@ -1,2 +1,4 @@
+import importlib
+from gui import StartGUI
 
-print("Initial Commit")
+StartGUI()
